@@ -1,0 +1,7 @@
+6
+lagarto
+papel
+pedra
+spock
+tesoura
+esmaga
