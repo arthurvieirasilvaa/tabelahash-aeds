@@ -79,7 +79,7 @@ void imprimir(TabelaHash t[]) {
 void main() {
         TabelaHash *buscar, tabela[TAM], aux[TAM];
         char nome[50];
-        int opcao, i = 0, linhas = 1;
+        int opcao, i = 0, j = 0, linhas = 1;
 
         FILE *file;
         file = fopen("input.txt", "r");
@@ -91,20 +91,22 @@ void main() {
         }
 
         else {
-            while((nome[i] = fgetc(file)) != EOF){
-                if(strlen(nome) > 1) {
-                    if(nome[i] == ' ') {
+            while(!feof(file)) {
+                nome[i] = fgetc(file);
+                if(nome[i] == ' ') {
+                    if(strlen(nome) > 1) {
+                        nome[i] = '\0';
                         inserir(tabela, nome);
-                        setbuf(stdin, NULL);
+                        i = -1;  
                     }
-                    if(nome[i] == '\n') {
-                        linhas++;
-                    }
-                    ++i;
                 }
+                if(nome[i] == '\n') {
+                    linhas++;
+                }
+                ++i;
             }
         }
-        
+
         imprimir(tabela);
 
         printf("Digite o nome que deseja buscar: ");
