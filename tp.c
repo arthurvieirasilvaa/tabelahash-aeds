@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #define TAM 257
-#define ACENTOS ",.!-"
+#define PONTOS " ,.!-?/;:\n"
 
 // Estrutura usada para a Tabela Hash:
 
@@ -38,35 +39,42 @@ int funcaoHashString(char str[]) {
     return hash % TAM;
 }
 
-void inserir(TabelaHash t[], char chave[]) {
-    strupr(chave);
-    if(strlen(chave) > 2) {
+// Função para colocar todos os caracteres da string minúsculos
+
+void minuscula(char str[]) {
+    int tam = strlen(str);
+    for(int i = 0; i < tam; i++) {
+        str[i] = tolower(str[i]);
+    }
+}
+
+int inserir(TabelaHash t[], char chave[]) {
+    minuscula(chave);
+    if(strlen(chave) > 1) {
         int id = funcaoHashString(chave); // Conseguindo a posição na qual a string será inserida.
-        while(strlen(t[id].str) > 1) {    //Se houver colisão, isto é, 
-            id = funcaoHash(id + 1);      // houver uma string nesse local, 
-        }                                 // iremos para a próxima posição da tabela.
+        while(strlen(t[id].str) > 1) {    // Se houver colisão, isto é, houver uma string nesse
+            if(strcmp(t[id].str, chave) == 0) {  // local, veremos se é a mesma string que será
+                t[id].frequencia++;              // inserida. Se for, não adicionaremos ela na
+                return 0;                        // tabela. Se não for, procuraremos a próxima
+            }                                    // posição vazia para adicioná-la.
+            else {     
+                id = funcaoHash(id + 1);
+            }       
+        }                                 
         strcpy(t[id].str, chave);
+        t[id].frequencia++;
     }
 }
 
 TabelaHash *busca(TabelaHash t[], char chave[]) {
-    strupr(chave);
+    minuscula(chave);
     int id = funcaoHashString(chave);
-    printf("Indice gerado: %d\n", id);
-
-    for(int i = 0; i < TAM; i++) {          // Laço for para calcular a frequência 
-        if(strcmp(chave, t[i].str) == 0) {  // com que a palavra aparece.
-            t[id].frequencia++;
-        }
-    }
-
+    //printf("Indice: %d\n", id);
     while(strlen(t[id].str) > 1) {
         if(strcmp(t[id].str, chave) == 0) {
             return &t[id];
         }
-        else {
-            id = funcaoHash(id + 1);
-        }
+        id = funcaoHash(id + 1);
     }
     return NULL;   
 }
@@ -79,10 +87,8 @@ void imprimir(TabelaHash t[]) {
 }
 
 void main() {
-        TabelaHash *buscar, tabela[TAM], aux[TAM];
-        char nome[50];
-        int opcao, i = 0, j = 0, linhas = 1;
-        int num = 0;
+        TabelaHash *buscar, tabela[TAM];
+        int linhas = 1;
 
         FILE *entrada;
         entrada = fopen("input.txt", "r");
@@ -94,24 +100,18 @@ void main() {
 
         if(entrada == NULL) {
             printf("Não foi possivel encontrar o arquivo.\n");
+            exit(1);
         }
 
         // Lendo o arquivo de entrada.
 
-        else {
-            while(!feof(entrada)) {
-                nome[i] = fgetc(entrada);
-                if(nome[i] == ' ') {
-                    if(strlen(nome) > 1) {
-                        nome[i] = '\0';
-                        inserir(tabela, nome);
-                        i = -1;  
-                    }
-                }
-                if(nome[i] == '\n') {
-                    linhas++;
-                }
-                ++i;
+        char linhaInteira[81];
+    
+        while(fgets(linhaInteira, 80, entrada) != NULL) {
+            char* palavraSozinha = strtok(linhaInteira, PONTOS);
+            while (palavraSozinha != NULL) {
+                inserir(tabela, palavraSozinha);  // colocar linha como parametro    
+                palavraSozinha = strtok(NULL, PONTOS);
             }
         }
 
@@ -119,91 +119,31 @@ void main() {
 
         if(pesquisa == NULL) {
             printf("Não foi possivel encontrar o arquivo.\n");
+            exit(1);
         }
 
-        else {
-            while(!feof(pesquisa)) {
-                fscanf(pesquisa, "%d", &num);
-                for(int i = 0; i < num; i++) {
-                    fgets(nome, 49, pesquisa);
-                    buscar = busca(tabela, nome);
-                    if(buscar != NULL) {
-                        printf("\nNome encontrado: ");
-                        printf("%s\n", buscar->str);
-                        printf("Frequencia: %d\n", buscar->frequencia);
-                    }
-                    else {
-                        printf("Nome nao encontrado!\n");
-                    }
-                    setbuf(stdin, NULL);
-                }
+        char palavra[50];
+        int flag = 0; /*Variável flag para iniciar lendo o arquivo a partir das palavras (ignorando a primeira linha) */        
+        while(fgets(palavra, 49, pesquisa) != NULL) {
+            if (!flag) {
+                    flag = 1;
+                    continue;
             }
+                    
+            if (palavra[strlen(palavra)-1] == '\n') {
+                palavra[strlen(palavra)-1] = '\0';
+            }
+            minuscula(palavra);
+            buscar = busca(tabela, palavra);
+            if(buscar != NULL) {
+                printf("%d ", buscar->frequencia);
+                printf("%s \n", palavra);
+            }
+            setbuf(stdin, NULL);
         }
 
         imprimir(tabela);
 
-        /*
-
-        printf("Digite o nome que deseja buscar: ");
-        scanf("%s", nome);
-        buscar = busca(tabela, nome);
-        if(buscar != NULL) {
-            printf("\nNome encontrado: ");
-            printf("%s\n", buscar->str);
-            printf("Frequencia: %d\n", buscar->frequencia);
-        }
-        else {
-            printf("Nome nao encontrado!\n");
-        }
-        setbuf(stdin, NULL);
-
-        */
-
         fclose(entrada);
         fclose(pesquisa);
-
-        /*
-        do {
-            printf("\n===============\n");
-            printf("MENU DE OPCOES\n");
-            printf("===============\n");
-            printf("\n0 - SAIR\n1 - Inserir\n2 - Buscar\n3 - Imprimir\n");
-            printf("Digite uma opcao: ");
-            scanf("%d", &opcao);
-            setbuf(stdin, NULL);
-
-            switch(opcao) {
-                case 1: 
-                    printf("Digite o nome que deseja inserir: ");
-                    fgets(nome, 49, stdin);
-                    strupr(nome);
-                    if(strlen(nome) > 2) {
-                        inserir(tabela, nome);
-                    }
-                    setbuf(stdin, NULL);
-                    break;
-                case 2:
-                    printf("Digite o nome que deseja buscar: ");
-                    fgets(nome, 49, stdin);
-                    strupr(nome);
-                    buscar = busca(tabela, nome);
-                    if(buscar != NULL) {
-                        printf("\nNome encontrado: ");
-                        printf("%s\n", buscar->str);
-                    }
-                    else {
-                        printf("Nome nao encontrado!\n");
-                    }
-                    setbuf(stdin, NULL);
-                    break;
-                case 3:
-                    imprimir(tabela);
-                    break;
-                default:
-                    if(opcao != 0) {
-                        printf("Opcao invalida!\n");
-                    }
-            }
-        }while(opcao != 0);
-    */
 }
