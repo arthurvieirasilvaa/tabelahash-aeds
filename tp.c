@@ -10,6 +10,7 @@
 typedef struct {
     char str[50];
     int frequencia;
+    int linha;
 }TabelaHash;
 
 // Função para inicializar a tabela com espaços vazios:
@@ -52,13 +53,13 @@ void minuscula(char str[]) {
     Conseguindo a posição na qual a string será inserida. Se houver colisão, isto é, houver uma string nesse local, veremos se é a mesma string que será inserida. Se for, não adicionaremos ela na tabela. Se não for, procuraremos a próxima posição vazia para adicioná-la.
 */
 
-int inserir(TabelaHash t[], char chave[]) {
+int inserir(TabelaHash t[], char chave[], int linhas) {
     minuscula(chave);
     int id = funcaoHashString(chave);
     if(strlen(chave) > 1) {
         while(strlen(t[id].str) > 1) {   
             if(strcmp(t[id].str, chave) == 0) {                 
-                t[id].frequencia++;              
+                t[id].frequencia++;
                 return 0;
             }        
             else {     
@@ -67,13 +68,13 @@ int inserir(TabelaHash t[], char chave[]) {
         }                                                              
         strcpy(t[id].str, chave);
         t[id].frequencia++;
+        t[id].linha = linhas;
     }
 }
 
 TabelaHash *busca(TabelaHash t[], char chave[]) {
     minuscula(chave);
     int id = funcaoHashString(chave);
-    //printf("Indice: %d\n", id);
     while(strlen(t[id].str) > 1) {
         if(strcmp(t[id].str, chave) == 0) {
             return &t[id];
@@ -92,7 +93,7 @@ void imprimir(TabelaHash t[]) {
 
 void main() {
         TabelaHash *buscar, tabela[TAM];
-        int linhas = 1;
+        int linhas = 0;
         char palavra[50];
 
         FILE *entrada;
@@ -108,14 +109,17 @@ void main() {
             exit(1);
         }
 
-        // Lendo o arquivo de entrada.
-
         char linhaInteira[81];
+
+        // Lendo o arquivo de entrada.
     
-        while(fgets(linhaInteira, 80, entrada) != NULL) {
+        while (fgets(linhaInteira, 80, entrada) != NULL) {
+            if(linhaInteira[strlen(linhaInteira)-1] == '\n') {
+                linhas++;
+            }
             char* palavraSozinha = strtok(linhaInteira, PONTOS);
             while (palavraSozinha != NULL) {
-                inserir(tabela, palavraSozinha);  // colocar linha como parametro    
+                inserir(tabela, palavraSozinha, linhas);  // colocar linha como parametro    
                 palavraSozinha = strtok(NULL, PONTOS);
             }
         }
@@ -130,6 +134,7 @@ void main() {
         /* Variável flag para iniciar lendo o arquivo a partir das palavras (ignorando a primeira linha) */
 
         int flag = 0;         
+
         while(fgets(palavra, 49, pesquisa) != NULL) {
             if (!flag) {
                 flag = 1;
@@ -142,11 +147,24 @@ void main() {
 
             minuscula(palavra);
             buscar = busca(tabela, palavra);
+
             if(buscar != NULL) {
                 printf("%d ", buscar->frequencia);
-                printf("%s \n", palavra);
+                printf("%s ", palavra);
+                for(int i = 0; i < buscar->frequencia; i++) {
+                    printf("%d ", buscar->linha);
+                }
+                printf("\n");
             }
-            setbuf(stdin, NULL);
+
+            // Se a palavra não estiver na tabela, a sua frequência será 0 e a função busca
+            // retorna NULL.
+    
+            else{
+                printf("0 "); 
+                printf("%s \n", palavra);
+                // Não há a indicação das linhas pois, a palavra não está no texto.
+            }
         }
 
         //imprimir(tabela);
