@@ -48,19 +48,23 @@ void minuscula(char str[]) {
     }
 }
 
+/*
+    Conseguindo a posição na qual a string será inserida. Se houver colisão, isto é, houver uma string nesse local, veremos se é a mesma string que será inserida. Se for, não adicionaremos ela na tabela. Se não for, procuraremos a próxima posição vazia para adicioná-la.
+*/
+
 int inserir(TabelaHash t[], char chave[]) {
     minuscula(chave);
+    int id = funcaoHashString(chave);
     if(strlen(chave) > 1) {
-        int id = funcaoHashString(chave); // Conseguindo a posição na qual a string será inserida.
-        while(strlen(t[id].str) > 1) {    // Se houver colisão, isto é, houver uma string nesse
-            if(strcmp(t[id].str, chave) == 0) {  // local, veremos se é a mesma string que será
-                t[id].frequencia++;              // inserida. Se for, não adicionaremos ela na
-                return 0;                        // tabela. Se não for, procuraremos a próxima
-            }                                    // posição vazia para adicioná-la.
+        while(strlen(t[id].str) > 1) {   
+            if(strcmp(t[id].str, chave) == 0) {                 
+                t[id].frequencia++;              
+                return 0;
+            }        
             else {     
                 id = funcaoHash(id + 1);
-            }       
-        }                                 
+            }                       
+        }                                                              
         strcpy(t[id].str, chave);
         t[id].frequencia++;
     }
@@ -89,6 +93,7 @@ void imprimir(TabelaHash t[]) {
 void main() {
         TabelaHash *buscar, tabela[TAM];
         int linhas = 1;
+        char palavra[50];
 
         FILE *entrada;
         entrada = fopen("input.txt", "r");
@@ -122,17 +127,19 @@ void main() {
             exit(1);
         }
 
-        char palavra[50];
-        int flag = 0; /*Variável flag para iniciar lendo o arquivo a partir das palavras (ignorando a primeira linha) */        
+        /* Variável flag para iniciar lendo o arquivo a partir das palavras (ignorando a primeira linha) */
+
+        int flag = 0;         
         while(fgets(palavra, 49, pesquisa) != NULL) {
             if (!flag) {
-                    flag = 1;
-                    continue;
+                flag = 1;
+                continue;
             }
                     
             if (palavra[strlen(palavra)-1] == '\n') {
                 palavra[strlen(palavra)-1] = '\0';
             }
+
             minuscula(palavra);
             buscar = busca(tabela, palavra);
             if(buscar != NULL) {
@@ -142,7 +149,7 @@ void main() {
             setbuf(stdin, NULL);
         }
 
-        imprimir(tabela);
+        //imprimir(tabela);
 
         fclose(entrada);
         fclose(pesquisa);
