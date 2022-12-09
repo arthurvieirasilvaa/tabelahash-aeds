@@ -5,13 +5,52 @@
 #define TAM 257
 #define PONTOS " ,.!-?/;:\n"
 
+// Estrutura usada para mostrar em quais linhas uma palavra aparece:
+
+typedef struct mostralinha {
+    int linha;
+    struct mostralinha *prox;
+}MostraLinha;
+
 // Estrutura usada para a Tabela Hash:
 
 typedef struct {
     char str[50];
     int frequencia;
-    int linha;
+    MostraLinha *pri;
 }TabelaHash;
+
+// Função usada para encontrar a linha da primeira ocorrência da palavra.
+
+MostraLinha *PrimeiraOcorrencia(int linha) {
+    MostraLinha* novo = (MostraLinha*) malloc(sizeof(MostraLinha));
+
+    novo->linha = linha;
+    novo->prox = NULL;
+    return novo;
+}
+
+// Função para verificar em quais linhas estão as outras palavras da ocorrência.
+
+void NovaOcorrencia(TabelaHash *t, int linha) {
+    MostraLinha **aux = &t->pri;
+
+    if(*aux != NULL) {
+        while((*aux)->prox != NULL) {
+            aux = &((*aux)->prox);
+        }
+
+        if(linha != (*aux)->linha) {
+            (*aux)->prox = PrimeiraOcorrencia(linha);
+        }
+        t->frequencia++;
+    }
+
+    else {
+        *aux = PrimeiraOcorrencia(linha);
+        t->frequencia = 1;
+    }
+}
 
 // Função para inicializar a tabela com espaços vazios:
 
@@ -53,7 +92,7 @@ void minuscula(char str[]) {
     Conseguindo a posição na qual a string será inserida. Se houver colisão, isto é, houver uma string nesse local, veremos se é a mesma string que será inserida. Se for, não adicionaremos ela na tabela. Se não for, procuraremos a próxima posição vazia para adicioná-la.
 */
 
-int inserir(TabelaHash t[], char chave[], int linhas) {
+int inserir(TabelaHash t[], char chave[], MostraLinha linhas) {
     minuscula(chave);
     int id = funcaoHashString(chave);
     if(strlen(chave) > 1) {
@@ -68,7 +107,6 @@ int inserir(TabelaHash t[], char chave[], int linhas) {
         }                                                              
         strcpy(t[id].str, chave);
         t[id].frequencia++;
-        t[id].linha = linhas;
     }
 }
 
@@ -93,7 +131,7 @@ void imprimir(TabelaHash t[]) {
 
 void main() {
         TabelaHash *buscar, tabela[TAM];
-        int linhas = 0;
+        MostraLinha *linhas;
         char palavra[50];
 
         FILE *entrada;
@@ -115,11 +153,11 @@ void main() {
     
         while (fgets(linhaInteira, 80, entrada) != NULL) {
             if(linhaInteira[strlen(linhaInteira)-1] == '\n') {
-                linhas++;
+                linhas->linha++;
             }
             char* palavraSozinha = strtok(linhaInteira, PONTOS);
             while (palavraSozinha != NULL) {
-                inserir(tabela, palavraSozinha, linhas);  // colocar linha como parametro    
+                inserir(tabela, palavraSozinha, *linhas);  // colocar linha como parametro    
                 palavraSozinha = strtok(NULL, PONTOS);
             }
         }
@@ -151,8 +189,10 @@ void main() {
             if(buscar != NULL) {
                 printf("%d ", buscar->frequencia);
                 printf("%s ", palavra);
-                for(int i = 0; i < buscar->frequencia; i++) {
-                    printf("%d ", buscar->linha);
+
+                if(buscar->frequencia == 1) {
+                    linhas = PrimeiraOcorrencia(buscar->pri->linha);
+                    printf("%d ", linhas->linha);
                 }
                 printf("\n");
             }
