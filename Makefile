@@ -27,8 +27,6 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.c
 	@ if [ ! -d ./$(BINDIR) ]; then mkdir -p $(BUILDDIR);fi
 	$(CC) -c $^ -o $@ $(CFLAGS)
 
-
-
 # Clean BIN and BUILD dirs
 .PHONY: clean
 clean: 

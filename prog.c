@@ -54,7 +54,7 @@ int inserir(TabelaHash t[], char chave[], int linhas) {
         while(strlen(t[id].str) > 1) {   
             if(strcmp(t[id].str, chave) == 0) {                
                 t[id].frequencia++;
-                for (int i = 0; i < t[id].frequencia; i++) {
+                for (int i = 0; i < 256; i++) {
                     if(t[id].linhas[i] == 0) {
                         t[id].linhas[i] = linhas;
                     }

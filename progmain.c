@@ -92,7 +92,7 @@ void main() {
             }
         }
 
-        //imprimir(tabela);
+        imprimir(tabela);
 
         fclose(entrada);
         fclose(pesquisa);
