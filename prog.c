@@ -54,13 +54,21 @@ int inserir(TabelaHash t[], char chave[], int linhas) {
         while(strlen(t[id].str) > 1) {   
             if(strcmp(t[id].str, chave) == 0) {                
                 t[id].frequencia++;
+
+                for(int i = 0; i < 256; i++) { // Verificando se a linha já foi adicionada.
+                    if(t[id].linhas[i] == linhas) {
+                        return 0;
+                    }
+                }
+
                 for (int i = 0; i < 256; i++) {
                     if(t[id].linhas[i] == 0) {
                         t[id].linhas[i] = linhas;
                     }
                 }
                 return 0;
-            }        
+            }       
+             
             else {     
                 id = funcaoHash(id + 1);
             }                       

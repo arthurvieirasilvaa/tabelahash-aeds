@@ -29,13 +29,13 @@ void main() {
         // Lendo o arquivo de entrada.
     
         while (fgets(linhaInteira, 80, entrada) != NULL) {
-            while(linhaInteira[strlen(linhaInteira)-1] == '\n') {
+            if(linhaInteira[strlen(linhaInteira)-1] == '\n') {
                 linhas++;
-                char* palavraSozinha = strtok(linhaInteira, PONTOS);
-                while (palavraSozinha != NULL) {
-                    inserir(tabela, palavraSozinha, linhas);  // colocar linha     como parametro
-                    palavraSozinha = strtok(NULL, PONTOS);
-                }
+            }
+            char* palavraSozinha = strtok(linhaInteira, PONTOS);
+            while (palavraSozinha != NULL) {
+                inserir(tabela, palavraSozinha, linhas);  // colocar linha     como parametro
+                palavraSozinha = strtok(NULL, PONTOS);
             }
         }
 
