@@ -29,12 +29,12 @@ void main() {
         // Lendo o arquivo de entrada.
     
         while (fgets(linhaInteira, 80, entrada) != NULL) {
+            if(linhaInteira[strlen(linhaInteira)-1] == '\n') {
+                linhas++;
+            }
             char* palavraSozinha = strtok(linhaInteira, PONTOS);
             while (palavraSozinha != NULL) {
-                if(linhaInteira[strlen(linhaInteira)-1] == '\n') {
-                    linhas++;
-                }
-                inserir(tabela, palavraSozinha, linhas);  // colocar linha como parametro    
+                inserir(tabela, palavraSozinha, linhas);  // colocar linha como parametro
                 palavraSozinha = strtok(NULL, PONTOS);
             }
         }
@@ -68,7 +68,16 @@ void main() {
                 printf("%s ", palavra);
 
                 if(buscar->frequencia == 1) {
-                    printf("%d ", buscar->linha);
+                    printf("%d ", buscar->pri);
+                }
+
+                else {
+                    printf("%d ", buscar->pri);
+                    for (int i = 1; i < buscar->frequencia; i++) {
+                        if(buscar->linhas[i] != 0) {
+                            printf("%d ", buscar->linhas[i]);
+                        }
+                    }
                 }
                 printf("\n");
             }

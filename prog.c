@@ -11,6 +11,7 @@
 void inicializar(TabelaHash t[]) {
     for(int i = 0; i < TAM; i++) {
         t[i].frequencia = 0;
+        t[i].linhas[i] = 0;
         strcpy(t[i].str, "");
     }
 }
@@ -48,12 +49,16 @@ void minuscula(char str[]) {
 
 int inserir(TabelaHash t[], char chave[], int linhas) {
     minuscula(chave);
-    int aux;
     int id = funcaoHashString(chave);
     if(strlen(chave) > 1) {
         while(strlen(t[id].str) > 1) {   
             if(strcmp(t[id].str, chave) == 0) {                
                 t[id].frequencia++;
+                for (int i = 0; i < t[id].frequencia; i++) {
+                    if(t[id].linhas[i] == 0) {
+                        t[id].linhas[i] = linhas;
+                    }
+                }
                 return 0;
             }        
             else {     
@@ -62,6 +67,7 @@ int inserir(TabelaHash t[], char chave[], int linhas) {
         }                                                              
         strcpy(t[id].str, chave);
         t[id].frequencia++;
+        t[id].pri = linhas;
     }
 }
 
