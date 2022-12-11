@@ -64,9 +64,9 @@ int inserir(TabelaHash t[], char chave[], int linhas) {
                 for (int i = 0; i < 256; i++) {
                     if(t[id].linhas[i] == 0) {
                         t[id].linhas[i] = linhas;
+                        return 0;
                     }
                 }
-                return 0;
             }       
 
             else {     
