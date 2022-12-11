@@ -55,7 +55,7 @@ int inserir(TabelaHash t[], char chave[], int linhas) {
             if(strcmp(t[id].str, chave) == 0) {                
                 t[id].frequencia++;
 
-                for(int i = 0; i < 256; i++) { // Verificando se a linha já    foi adicionada.
+                for(int i = 0; i < 256; i++) { // Verificando se a linha já foi adicionada.
                     if(t[id].linhas[i] == linhas) {
                         return 1;
                     }

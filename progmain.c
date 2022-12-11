@@ -34,7 +34,7 @@ void main() {
             }
             char* palavraSozinha = strtok(linhaInteira, PONTOS);
             while (palavraSozinha != NULL) {
-                inserir(tabela, palavraSozinha, linhas);  // colocar linha     como parametro
+                inserir(tabela, palavraSozinha, linhas);
                 palavraSozinha = strtok(NULL, PONTOS);
             }
         }
