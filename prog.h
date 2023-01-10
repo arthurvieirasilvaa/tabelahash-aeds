@@ -3,9 +3,9 @@
 typedef struct {
     char str[50];
     int frequencia;
-    int pri;  // Variável usada para armazenar a frequência da primeira ocorrência.
-    int linhas[256]; // Array usado para armazenar as linhas em que uma palavra aparece.
-}TabelaHash;
+    int pri;         // Variável usada para armazenar a frequência da primeira ocorrência.
+    int linhas[256]; // Array usado para armazenar as linhas em que uma palavra aparece 
+}TabelaHash;         // depois da primeira ocorrência.
 
 void inicializar(TabelaHash t[]);
 

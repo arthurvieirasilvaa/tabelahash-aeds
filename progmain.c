@@ -26,7 +26,10 @@ void main() {
 
         char linhaInteira[81];
 
-        // Lendo o arquivo de entrada.
+        /* 
+            Lendo o arquivo de entrada e utilizando strtok para retirar pontuações, espaços
+            em branco e quebras de linha. 
+        */
     
         while (fgets(linhaInteira, 80, entrada) != NULL) {
             if(linhaInteira[strlen(linhaInteira)-1] == '\n') {
@@ -46,7 +49,9 @@ void main() {
             exit(1);
         }
 
-        /* Variável flag para iniciar lendo o arquivo a partir das palavras (ignorando a primeira linha) */
+        /* 
+            Variável flag para iniciar lendo o arquivo a partir das palavras (ignorando a primeira linha).
+        */
 
         int flag = 0;         
 
@@ -82,8 +87,10 @@ void main() {
                 printf("\n");
             }
 
-            // Se a palavra não estiver na tabela, a sua frequência será 0 e a função busca
-            // retorna NULL.
+            /*
+                Se a palavra não estiver na tabela, a sua frequência será 0 e a função busca
+                retorna NULL.
+            */
     
             else{
                 printf("0 "); 

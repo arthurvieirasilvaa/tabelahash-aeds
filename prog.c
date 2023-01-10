@@ -10,9 +10,12 @@
 
 void inicializar(TabelaHash t[]) {
     for(int i = 0; i < TAM; i++) {
-        t[i].frequencia = 0;
-        t[i].linhas[i] = 0;
-        strcpy(t[i].str, "");
+        for(int j = 0; j < 256; j++) {
+            t[i].frequencia = 0;
+            t[i].pri = 0;
+            t[i].linhas[j] = 0;
+            strcpy(t[i].str, "");
+        }
     }
 }
 
@@ -80,6 +83,12 @@ int inserir(TabelaHash t[], char chave[], int linhas) {
     }
 }
 
+/* 
+    Função utilizada para verificar se uma palavra está na tabela. Se estiver, a função 
+    retorna o endereço da estrutura TabelaHash com os seus respectivos dados; se não estiver,
+    a função retorna NULL:
+*/
+
 TabelaHash *busca(TabelaHash t[], char chave[]) {
     minuscula(chave);
     int id = funcaoHashString(chave);
@@ -91,6 +100,8 @@ TabelaHash *busca(TabelaHash t[], char chave[]) {
     }
     return NULL;   
 }
+
+// Função usada para imprimir toda a tabela hash:
 
 void imprimir(TabelaHash t[]) {
     for(int i = 0; i < TAM; i++) {
